@@ -2,11 +2,13 @@ import React from "react";
 import { Link, Route } from "react-router-dom";
 import * as BooksAPI from "../utils/BooksAPI";
 import BookShelf from "../components/BookShelf";
+import Search from "../components/Search";
 import "./App.css";
 
 class BooksApp extends React.Component {
   state = {
-    books: []
+    books: [],
+    searchBooks: []
   }
 
   componentDidMount() {
@@ -33,63 +35,66 @@ class BooksApp extends React.Component {
     });
   };
 
+  booksSearch = (searchQuery) => {
+    if(searchQuery){
+      BooksAPI.search(searchQuery, 30).then((result) => {
+        if(result && result.length){
+          result.forEach((book, index) => {
+            let myBook = this.state.books.find((b) => b.id === book.id);
+            book.shelf = myBook ? myBook.shelf : 'none';
+            result[index] = book;
+          });
+
+          this.setState({
+              searchBooks: result
+          });
+        }
+      });
+    } else {
+      this.setState({
+          searchBooks: []
+      });
+    }
+  }; 
+
   render() {
     return (
         <div className="app">
-          <Route 
-            path="/search"
-            render={({ history }) => 
-              (<div className="search-books">
-                <div className="search-books-bar">
-                  <Link className="close-search" to="/">close</Link>
-                  <div className="search-books-input-wrapper">
-                    {/*
-                      NOTES: The search from BooksAPI is limited to a particular set of search terms.
-                      You can find these search terms here:
-                      https://github.com/udacity/reactnd-project-myreads-starter/blob/master/SEARCH_TERMS.md
-
-                      However, remember that the BooksAPI.search method DOES search by title or author. So, don't worry if
-                      you don't find a specific author or title. Every search is limited by search terms.
-                    */}
-                    <input type="text" placeholder="Search by title or author"/>
-                  </div>
-              </div>
-              <div className="search-books-results">
-                <ol className="books-grid"></ol>
-              </div>
-            </div>)}
+          <Route path="/search" render={() => (
+            <Search
+                books={this.state.searchBooks}
+                booksSearch={this.booksSearch}
+                changeShelf={this.changeShelf}                
             />
-            <Route
-              exact
-              path="/"
-              render={() => (
-                <div className="list-books">
-                  <div className="list-books-title">
-                    <h1>MyReads</h1>
-                  </div>
-                  <div className="list-books-content">
-                    <div>
-                      <BookShelf 
-                        title="Currently Reading" 
-                        books={this.getBooksByShelf("currentlyReading")}
-                        changeShelf={this.changeShelf}/>
+          )}/>
+          <Route exact path="/"
+            render={() => (
+              <div className="list-books">
+                <div className="list-books-title">
+                  <h1>MyReads</h1>
+                </div>
+                <div className="list-books-content">
+                  <div>
+                    <BookShelf 
+                      title="Currently Reading" 
+                      books={this.getBooksByShelf("currentlyReading")}
+                      changeShelf={this.changeShelf}/>
 
-                      <BookShelf 
-                        title="Want to Read" 
-                        books={this.getBooksByShelf("wantToRead")}
-                        changeShelf={this.changeShelf}/>
+                    <BookShelf 
+                      title="Want to Read" 
+                      books={this.getBooksByShelf("wantToRead")}
+                      changeShelf={this.changeShelf}/>
 
-                      <BookShelf 
-                        title="Read" 
-                        books={this.getBooksByShelf("read")}
-                        changeShelf={this.changeShelf}/>
-                    </div>
+                    <BookShelf 
+                      title="Read" 
+                      books={this.getBooksByShelf("read")}
+                      changeShelf={this.changeShelf}/>
                   </div>
-                  <div className="open-search">
-                    <Link to="/search">Add a book</Link>                  
-                  </div>
-                </div>)}
-            />
+                </div>
+                <div className="open-search">
+                  <Link to="/search">Add a book</Link>                  
+                </div>
+              </div>)}/>
         </div> 
     )
   }
