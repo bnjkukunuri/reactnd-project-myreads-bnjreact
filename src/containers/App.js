@@ -1,8 +1,8 @@
-import React from 'react';
-import { Link, Route } from 'react-router-dom';
-import * as BooksAPI from '../utils/BooksAPI';
+import React from "react";
+import { Link, Route } from "react-router-dom";
+import * as BooksAPI from "../utils/BooksAPI";
 import BookShelf from "../components/BookShelf";
-import './App.css';
+import "./App.css";
 
 class BooksApp extends React.Component {
   state = {
@@ -28,7 +28,7 @@ class BooksApp extends React.Component {
       book.shelf = newShelfName;
 
       this.setState( state => ({
-        books : state.books.filter( (b) => b.id !== book.id).concat([book])
+        books : state.books.filter(b => b.id !== book.id).concat([ book ])
       }));
     });
   };
@@ -62,36 +62,33 @@ class BooksApp extends React.Component {
             <Route
               exact
               path="/"
-              render={() => 
-                (<div className="list-books">
-                <div className="list-books-title">
-                  <h1>MyReads</h1>
-                </div>
-                <div className="list-books-content">
-                  <div>
-                    <BookShelf 
-                    title="Currently Reading" 
-                    books= {this.getBooksByShelf("currentlyReading")}
-                    changeShelf={this.changeShelf}
-                    />
-
-                    <BookShelf 
-                    title="Want to Read" 
-                    books= {this.getBooksByShelf("wantToRead")}
-                    changeShelf={this.changeShelf}
-                    />
-
-                    <BookShelf 
-                    title="Read" 
-                    books= {this.getBooksByShelf("read")}
-                    changeShelf={this.changeShelf}
-                    />
+              render={() => (
+                <div className="list-books">
+                  <div className="list-books-title">
+                    <h1>MyReads</h1>
                   </div>
-                </div>
-                <div className="open-search">
-                  <Link to="/search">Add a book</Link>                  
-                </div>
-              </div>)}
+                  <div className="list-books-content">
+                    <div>
+                      <BookShelf 
+                        title="Currently Reading" 
+                        books={this.getBooksByShelf("currentlyReading")}
+                        changeShelf={this.changeShelf}/>
+
+                      <BookShelf 
+                        title="Want to Read" 
+                        books={this.getBooksByShelf("wantToRead")}
+                        changeShelf={this.changeShelf}/>
+
+                      <BookShelf 
+                        title="Read" 
+                        books={this.getBooksByShelf("read")}
+                        changeShelf={this.changeShelf}/>
+                    </div>
+                  </div>
+                  <div className="open-search">
+                    <Link to="/search">Add a book</Link>                  
+                  </div>
+                </div>)}
             />
         </div> 
     )
